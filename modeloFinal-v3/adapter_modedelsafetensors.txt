@@ -1,0 +1,1 @@
+aqui van los tensores guardados con el entrenamiento fine tuning, no se pudo subir por el peso
