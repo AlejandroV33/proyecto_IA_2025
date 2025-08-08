@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente SQL con Mistral</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    /* Estilos para el chat mejorado */
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 280px;
+        background-color: #1e293b;
+        color: white;
+        height: 100vh;
+        position: fixed;
+        left: -280px;
+        top: 0;
+        transition: all 0.3s ease;
+        z-index: 1000;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .sidebar-header {
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #334155;
+    }
+
+    .sidebar-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+    }
+
+    .close-sidebar {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+    }
+
+    .sidebar-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar-menu li {
+        padding: 0;
+    }
+
+    .sidebar-menu a {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        color: #f8fafc;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .sidebar-menu a:hover {
+        background-color: #334155;
+        color: #10b981;
+    }
+
+    .sidebar-menu i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+
+    /* Chat Container */
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100vh;
+        background-color: white;
+        margin-left: 0;
+        transition: margin-left 0.3s ease;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar.active ~ .chat-container {
+        margin-left: 280px;
+    }
+
+    .chat-header {
+        background-color: #10b981;
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+    }
+
+    .chat-header h2 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 600;
+    }
+
+    .menu-toggle {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        margin-right: 15px;
+    }
+
+    .chat-actions {
+        display: flex;
+        gap: 15px;
+    }
+
+    .btn-icon {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    /* Messages Container */
+    .messages-container {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background-color: #f0f2f5;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .message {
+        max-width: 70%;
+        padding: 12px 15px;
+        border-radius: 18px;
+        position: relative;
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .message.bot {
+        background-color: white;
+        align-self: flex-start;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border-bottom-left-radius: 5px;
+    }
+
+    .message.user {
+        background-color: #10b981;
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 5px;
+    }
+
+    .message-content {
+        margin-bottom: 5px;
+    }
+
+    .message-time {
+        font-size: 0.7rem;
+        opacity: 0.7;
+        text-align: right;
+    }
+
+    /* Chat Input */
+    .chat-input-container {
+        display: flex;
+        padding: 15px;
+        background-color: white;
+        border-top: 1px solid #e5e7eb;
+        align-items: center;
+    }
+
+    .chat-input-container input {
+        flex: 1;
+        padding: 12px 15px;
+        border: 1px solid #e5e7eb;
+        border-radius: 25px;
+        outline: none;
+        font-size: 1rem;
+        margin: 0 10px;
+    }
+
+    .chat-input-container input:focus {
+        border-color: #10b981;
+    }
+
+    .btn-send {
+        background-color: #10b981;
+        color: white;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-send:hover {
+        background-color: #0ea371;
+        transform: scale(1.05);
+    }
+
+    /* Animaciones */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 250px;
+            left: -250px;
+        }
+
+        .sidebar.active ~ .chat-container {
+            margin-left: 250px;
+        }
+
+        .message {
+            max-width: 85%;
+        }
+    }
+</style>
+<body>
+<div class="chat-container">
+    <div class="messages-container" id="messages-container">
+        <!-- Mensajes aparecerán aquí dinámicamente -->
+    </div>
+    <div class="input-container">
+        <input type="text" id="user-input" placeholder="Escribe tu consulta...">
+        <button id="send-button">Enviar</button>
+    </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

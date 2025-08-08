@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataBot | Asistente Inteligente para Negocios</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+<!-- Fondo animado con estrellas -->
+<div class="stars-bg"></div>
+
+<header>
+    <div class="container">
+        <nav>
+            <div class="logo">Data<span>Bot</span></div>
+            <ul class="nav-links">
+                <li><a href="#features">Beneficios</a></li>
+                <li><a href="#uses">Usos</a></li>
+                <li><a href="#how-it-works">Cómo Funciona</a></li>
+                <li><a href="pricing.html">Precios</a></li>
+                <li><a href="#contact">Contacto</a></li>
+                <li><a href="login.html" class="login-btn">Iniciar Sesión</a></li>
+            </ul>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Tu negocio más inteligente con DataBot</h1>
+                <p class="subtitle">El asistente que automatiza consultas, agenda citas y conecta con tus clientes - todo en un solo lugar</p>
+                <div class="cta-buttons">
+                    <a href="#demo" class="btn primary">Ver Demostración</a>
+                    <a href="pricing.html" class="btn secondary">Ver Planes</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="chat-bubble animated-float">
+                    <!--<div class="message bot">Hola! Soy DataBot. Puedo ayudarte con:<br>- Consultas de datos<br>- Agendar citas<br>- Enviar recordatorios<br>¿En qué puedo ayudarte hoy?</div>
+                    <div class="message user">Agenda una cita con Juan Pérez para mañana a las 10am</div>
+                    <div class="message bot">✔ Cita agendada con Juan Pérez<br>📅 15 de Julio, 10:00am<br>📌 Oficina Principal</div>-->
+                    <div class="message bot">Hola! Soy DataBot, en que puedo ayudarte</div>
+                    <div class="message user">¿Cuántos clientes nuevos tuvimos este mes?</div>
+                    <div class="message bot">Este ultimo mes tuviste 124 clientes nuevos</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Transforma tu gestión empresarial</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon"><i class="fas fa-database"></i></div>
+                    <h3>Conexión directa</h3>
+                    <p>Se integra con tu base de datos existente en minutos</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon"><i class="fas fa-comments"></i></div>
+                    <h3>Habla con tus datos</h3>
+                    <p>Pregunta en lenguaje natural como si hablaras con un experto</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon"><i class="fas fa-clock"></i></div>
+                    <h3>Tiempo real</h3>
+                    <p>Respuestas actualizadas al instante con tus últimos datos</p>
+                </div>
+            </div>
+        </div>
+        <br><br><br>
+        <div class="container">
+            <h2>Mejora tu servicio al cliente</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Muestra información</h3>
+                    <p>Presenta información relevante para nuevos y atiguos clientes</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon"><i class="fas fa-calendar-check"></i></div>
+                    <h3>Gestión de citas</h3>
+                    <p>Agenda, modifica y confirma citas automáticamente</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon"><i class="fas fa-comment-dots"></i></div>
+                    <h3>Comunicación 24/7</h3>
+                    <p>Atiende consultas de clientes incluso fuera de horario</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--<section id="uses" class="uses">
+        <div class="container">
+            <h2>DataBot sirve para todo tu equipo</h2>
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="admin">Administración</button>
+                <button class="tab-btn" data-tab="sales">Ventas</button>
+                <button class="tab-btn" data-tab="clients">Clientes</button>
+            </div>
+            <div class="tab-content active" id="admin">
+                <div class="use-cases">
+                    <div class="use-case">
+                        <i class="fas fa-database"></i>
+                        <p>Genera reportes automáticos de inventario y ventas</p>
+                    </div>
+                    <div class="use-case">
+                        <i class="fas fa-bell"></i>
+                        <p>Alertas de stock bajo o fechas importantes</p>
+                    </div>
+                    <div class="use-case">
+                        <i class="fas fa-file-invoice"></i>
+                        <p>Consulta estados financieros con preguntas simples</p>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content" id="sales">
+                <div class="use-cases">
+                    <div class="use-case">
+                        <i class="fas fa-users"></i>
+                        <p>Seguimiento automático de leads y clientes</p>
+                    </div>
+                    <div class="use-case">
+                        <i class="fas fa-calendar-alt"></i>
+                        <p>Programación inteligente de visitas y reuniones</p>
+                    </div>
+                    <div class="use-case">
+                        <i class="fas fa-bullseye"></i>
+                        <p>Identificación de oportunidades de venta cruzada</p>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content" id="clients">
+                <div class="use-cases">
+                    <div class="use-case">
+                        <i class="fas fa-question-circle"></i>
+                        <p>Resuelve dudas sobre productos y servicios</p>
+                    </div>
+                    <div class="use-case">
+                        <i class="fas fa-clock"></i>
+                        <p>Consulta horarios y agenda citas directamente</p>
+                    </div>
+                    <div class="use-case">
+                        <i class="fas fa-shopping-cart"></i>
+                        <p>Realiza pedidos y seguimientos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>-->
+
+    <!--<section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2>Funciona en 3 simples pasos</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <p>Conecta tus sistemas (ERP, CRM, WhatsApp, etc.)</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <p>Configura tus flujos de trabajo</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <p>Empieza a interactuar con DataBot</p>
+                </div>
+            </div>
+            <div class="video-container">
+                <div class="video-placeholder">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+        </div>
+    </section>-->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2>Así de simple funciona</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <p>Se conecta con tu sistema de información o base de datos</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <p>Carga el contexto y estructura de tus datos</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <p>Pregunta o pide lo que necesites</p>
+                </div>
+            </div>
+            <div class="video-container">
+                <div class="video-placeholder">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="demo" class="demo">
+        <div class="container">
+            <h2>Pruébalo tú mismo</h2>
+            <div class="demo-container">
+                <div class="demo-chat">
+                    <div class="message bot">Hola! Soy DataBot. Puedes preguntarme cosas como:<br><br>"¿Cuánto vendimos la semana pasada?"<br>"Agenda una cita con María para mañana"<br>"Envía un recordatorio a los clientes pendientes"</div>
+                </div>
+                <div class="demo-form">
+                    <input type="text" placeholder="Escribe tu pregunta o instrucción...">
+                    <button class="btn primary">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2>Contáctanos</h2>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3>¿Listo para transformar tu negocio?</h3>
+                    <p><i class="fas fa-envelope"></i> alejandro.vj03@outlook.com</p>
+                    <p><i class="fas fa-phone"></i> +593 96 390 5067</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Quito, Ecuador</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <input type="text" placeholder="Nombre" required>
+                    <input type="email" placeholder="Correo" required>
+                    <input type="tel" placeholder="Teléfono">
+                    <textarea placeholder="Cuéntanos sobre tu negocio y necesidades" required></textarea>
+                    <button type="submit" class="btn primary">Enviar Mensaje</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="logo">Data<span>Bot</span></div>
+            <p>© 2023 DataBot. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="scritpIndex.js"></script>
+</body>
+</html>
