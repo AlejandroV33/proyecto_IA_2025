@@ -1,0 +1,188 @@
+2. Manejo de sql_query Vacío
+El código actualmente devuelve un mensaje estático en caso de que no se genere una consulta SQL válida, pero sería más claro si devuelves la estructura de QueryResponse completa, también con un error opcional para que el cliente pueda manejar este caso de manera más consistente.
+
+Ejemplo:
+
+python
+Copiar
+Editar
+if not sql_data.get("sql_query"):
+    return QueryResponse(
+        answer="Lo siento, solo puedo responder preguntas acerca de la información en la base de datos.",
+        sql_query=None,
+        db_results=None,
+        error="No se generó una consulta SQL válida."
+    )
+3. Manejo de Excepciones en la API
+Aunque ya tienes un buen manejo de errores, podrías agregar algunas excepciones más específicas para manejar errores de la base de datos o del modelo de manera más detallada, si lo deseas.
+
+Ejemplo:
+
+python
+Copiar
+Editar
+except SomeSpecificDatabaseError as e:
+    logger.error(f"Error de base de datos: {str(e)}")
+    raise HTTPException(status_code=500, detail="Error al ejecutar la consulta en la base de datos")
+4. Depuración del Esquema de Base de Datos
+Tienes un print del esquema de la base de datos (print("Esquema de la base de datos:\n")). En producción, es mejor utilizar el registro en lugar de print, ya que eso es más adecuado para la depuración y mantiene el rendimiento.
+
+Puedes cambiarlo por algo como:
+
+python
+Copiar
+Editar
+logger.debug(f"Esquema de la base de datos:\n{db_schema}")
+5. Documentación de FastAPI
+Aunque la documentación de FastAPI se genera automáticamente, si deseas mejorar la comprensión de las rutas y los parámetros, puedes añadir descripciones adicionales en las clases o en los métodos.
+
+Ejemplo:
+
+python
+Copiar
+Editar
+class QueryRequest(BaseModel):
+    query: str  # La consulta del usuario en lenguaje natural
+6. Incorporar la Configuración de Logging
+Si tienes un archivo log.ini, asegúrate de que esté configurado correctamente. Si no estás usando un archivo de configuración, puedes configurar los logs en el código para mayor claridad:
+
+python
+Copiar
+Editar
+logging.basicConfig(level=logging.DEBUG)
+7. Optimización del Uso de deepseek_service
+Si el servicio deepseek_service no cambia entre peticiones, está bien que lo inicialices como una variable global al inicio del archivo, pero asegúrate de que no se re-cree innecesariamente. En tu caso, parece que ya lo manejas bien, pero siempre es bueno revisar que se haga un uso eficiente de los servicios.
+
+8. Mejorar la Respuesta de Errores
+En lugar de devolver un diccionario plano en la excepción, puedes usar HTTPException para hacerla más consistente:
+
+python
+Copiar
+Editar
+raise HTTPException(
+    status_code=500,
+    detail="Ocurrió un error procesando tu consulta",
+    headers={"x-error": str(e)}  # Puedes agregar detalles adicionales si lo deseas
+)
+Código final con algunas mejoras sugeridas:
+python
+Copiar
+Editar
+import json
+import logging
+import os
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from dotenv import load_dotenv
+from typing import Any, Optional
+from llm_service import DeepseekService
+from baseDatos import DatabaseManager
+
+# Configuración inicial
+load_dotenv()
+logger = logging.getLogger(__name__)
+
+app = FastAPI(
+    title="DeepSeek SQL Assistant API",  # Título actualizado
+    description="API que transforma consultas naturales a SQL usando DeepSeek R1",
+)
+
+# Configuración CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # En producción se cambia
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Configuración
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+DB_PATH = os.getenv("SQLITE_DB_PATH", "database.db")
+
+# Inicialización de servicios
+db_manager = DatabaseManager(DB_PATH)
+deepseek_service = DeepseekService(OPENROUTER_API_KEY)
+
+
+class QueryRequest(BaseModel):
+    query: str
+
+
+class QueryResponse(BaseModel):
+    answer: str
+    sql_query: Optional[str] = None
+    db_results: Optional[Any] = None
+    error: Optional[str] = None
+
+
+@app.post("/query", response_model=QueryResponse)
+async def consulta_usuario(request: QueryRequest):
+    """
+    Endpoint principal que:
+    1. Recibe una consulta en lenguaje natural
+    2. Genera SQL usando DeepSeek R1
+    3. Ejecuta la consulta en la base de datos
+    4. Devuelve una respuesta en lenguaje natural
+    """
+    try:
+        # Obtener esquema de la base de datos
+        db_schema = db_manager.get_schema()
+        logger.debug(f"Esquema de la base de datos:\n{db_schema}")
+
+        # Generar consulta SQL
+        sql_response = await deepseek_service.human_query_to_sql(
+            human_query=request.query,
+            db_schema=db_schema
+        )
+        sql_data = json.loads(sql_response)
+
+        # Si no es una consulta válida para la base de datos
+        if not sql_data.get("sql_query"):
+            return QueryResponse(
+                answer="Lo siento, solo puedo responder preguntas acerca de la información en la base de datos.",
+                sql_query=None,
+                db_results=None,
+                error="No se generó una consulta SQL válida."
+            )
+
+        sql_query = sql_data["sql_query"]
+
+        # Ejecutar consulta SQL
+        db_results = db_manager.execute_query(sql_query)
+
+        # Generar respuesta natural
+        answer = await deepseek_service.build_answer(
+            result=db_results,
+            human_query=request.query
+        )
+
+        return QueryResponse(
+            answer=answer,
+            sql_query=sql_query,
+            db_results=db_results
+        )
+
+    except HTTPException:
+        raise
+    except json.JSONDecodeError as e:
+        logger.error(f"Error decodificando JSON: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error procesando respuesta del modelo")
+    except Exception as e:
+        logger.error(f"Error inesperado: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="Ocurrió un error procesando tu consulta"
+        )
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8000,
+        log_config="log.ini"  # Opcional: configuración de logging
+    )
